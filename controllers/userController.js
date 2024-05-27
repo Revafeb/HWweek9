@@ -1,7 +1,9 @@
-// middlewarecl
+// middleware
 const pool = require("../config/config.js");
 const bcrypt = require("bcrypt");
 const salt = bcrypt.genSaltSync(10);
+const {generateToken} = require("../lib/jwt.js")
+
 
 const register = (req, res, next) => {
   //email, gender, password, role
@@ -77,8 +79,18 @@ const login = (req, res, next) => {
             //cek password
             if(bcrypt.compareSync(password, foundUser.password)) {
             //berhasil login
+                const accessToken = generateToken({
+                    id: foundUser.id,
+                    email: foundUser.email,
+                    role: foundUser.role
+                    
+                })
 
-            } else {
+                res.status(200).json({
+                    message: "Login Successfully",
+                    accesToken
+                })
+        } else {
                 res.status(400).json({message: "Wrong email or password"})  
             }
         }
